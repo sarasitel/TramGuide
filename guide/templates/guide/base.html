@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CityTram Guide{% endblock %}</title>
+    {% if active == 'carte' %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'guide/css/style.css' %}?v=images-quality-v10">
+</head>
+<body data-page="{{ active|default:'home' }}">
+    <aside class="sidebar" id="sidebar">
+        <a class="sidebar-brand" href="{% url 'guide:home' %}">
+            <img src="{% static 'guide/img/logo.svg' %}" alt="CityTram logo">
+            <span><strong>City<span>Tram</span></strong><small data-i18n="brand.subtitle.short">Rabat · Salé</small></span>
+        </a>
+        <nav class="side-nav" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.aria">
+            <a class="nav-item {% if active == 'home' %}active{% endif %}" href="{% url 'guide:home' %}"><span class="nav-icon">⌂</span><span data-i18n="nav.home">Accueil</span></a>
+            <a class="nav-item {% if active == 'monuments' %}active{% endif %}" href="{% url 'guide:monuments' %}"><span class="nav-icon">▥</span><span data-i18n="nav.monuments">Monuments</span></a>
+            <a class="nav-item {% if active == 'stations' %}active{% endif %}" href="{% url 'guide:stations' %}"><span class="nav-icon">◎</span><span data-i18n="nav.stations">Stations</span></a>
+            <a class="nav-item {% if active == 'lignes' %}active{% endif %}" href="{% url 'guide:lignes' %}"><span class="nav-icon">▣</span><span data-i18n="nav.lines">Lignes</span></a>
+            <a class="nav-item {% if active == 'circuits' %}active{% endif %}" href="{% url 'guide:circuits' %}"><span class="nav-icon">⌘</span><span data-i18n="nav.circuits">Circuits</span></a>
+            <a class="nav-item {% if active == 'carte' %}active{% endif %}" href="{% url 'guide:carte' %}"><span class="nav-icon">♧</span><span data-i18n="nav.map">Carte</span></a>
+            <a class="nav-item {% if active == 'tickets' %}active{% endif %}" href="{% url 'guide:tickets' %}"><span class="nav-icon">▤</span><span data-i18n="nav.tickets">Tickets</span></a>
+            <a class="nav-item {% if active == 'about' %}active{% endif %}" href="{% url 'guide:about' %}"><span class="nav-icon">ⓘ</span><span data-i18n="nav.about">À propos</span></a>
+        </nav>
+        <div class="sidebar-card">
+            <b data-i18n="sidebar.title">Guide intelligent</b>
+            <small data-i18n="sidebar.text">Stations, monuments et tickets dans une interface dynamique.</small>
+        </div>
+    </aside>
+
+    <main class="main-shell">
+        <header class="topbar">
+            <button class="menu-btn" type="button" id="menuToggle" aria-label="Ouvrir le menu" data-i18n-attr="aria-label:topbar.menu">☰</button>
+            <a class="brand" href="{% url 'guide:home' %}">
+                <img src="{% static 'guide/img/logo.svg' %}" alt="CityTram logo">
+                <span class="brand-text"><strong>City<span>Tram</span> Guide</strong><small data-i18n="brand.subtitle.full">Explorer Rabat-Salé</small></span>
+            </a>
+            <div class="top-actions">
+                <div class="language-select language-switch-button" id="languageSelect" aria-label="Choisir la langue" data-i18n-attr="aria-label:language.aria">
+                    <button class="language-button" type="button" id="languageButton" aria-haspopup="listbox" aria-expanded="false">
+                        <span class="language-current" id="languageCurrent">FR — Français</span>
+                        <span class="language-caret" aria-hidden="true">⌄</span>
+                    </button>
+                    <div class="language-menu" id="languageMenu" role="listbox" aria-label="Choisir la langue" data-i18n-attr="aria-label:language.aria">
+                        <button class="language-option" type="button" role="option" data-lang="fr">FR — Français</button>
+                        <button class="language-option" type="button" role="option" data-lang="en">EN — English</button>
+                        <button class="language-option" type="button" role="option" data-lang="ar">AR — العربية</button>
+                    </div>
+                </div>
+                <a class="btn btn-light" href="{% url 'guide:login' %}" data-i18n="actions.login">Connexion</a>
+                <a class="btn btn-red" href="{% url 'guide:register' %}" data-i18n="actions.register">S'inscrire</a>
+                <button class="theme-btn" type="button" id="themeToggle" aria-label="Changer le thème" data-i18n-attr="aria-label:topbar.theme">☼</button>
+            </div>
+        </header>
+
+        <section class="page-canvas">
+            {% block content %}{% endblock %}
+        </section>
+    </main>
+
+    <script>
+        window.CityTramConfig = {
+            page: "{{ active|default:'home' }}",
+            staticUrl: "{% static 'guide/' %}",
+            routes: {
+                home: "{% url 'guide:home' %}",
+                monuments: "{% url 'guide:monuments' %}",
+                stations: "{% url 'guide:stations' %}",
+                lignes: "{% url 'guide:lignes' %}",
+                circuits: "{% url 'guide:circuits' %}",
+                carte: "{% url 'guide:carte' %}",
+                tickets: "{% url 'guide:tickets' %}",
+                about: "{% url 'guide:about' %}",
+                login: "{% url 'guide:login' %}",
+                register: "{% url 'guide:register' %}"
+            }
+        };
+    </script>
+    <script src="{% static 'guide/js/common.js' %}?v=images-quality-v10"></script>
+    {% if active == 'home' %}
+    <script src="{% static 'guide/js/pages/home.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'monuments' %}
+    <script src="{% static 'guide/js/pages/monuments.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'stations' %}
+    <script src="{% static 'guide/js/pages/stations.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'lignes' %}
+    <script src="{% static 'guide/js/pages/lignes.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'circuits' %}
+    <script src="{% static 'guide/js/pages/circuits.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'carte' %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'guide/js/pages/carte.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'tickets' %}
+    <script src="{% static 'guide/js/pages/tickets.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'about' %}
+    <script src="{% static 'guide/js/pages/about.js' %}?v=images-quality-v10"></script>
+    {% elif active == 'login' or active == 'register' %}
+    <script src="{% static 'guide/js/pages/auth.js' %}?v=images-quality-v10"></script>
+    {% endif %}
+</body>
+</html>
